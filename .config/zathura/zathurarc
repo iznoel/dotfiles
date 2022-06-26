@@ -1,0 +1,13 @@
+set font               "Monospace 14"
+set default-bg         "#000010"
+set default-fg         "#a3a3a3"
+set recolor-lightcolor "#aaaa90"
+set recolor-darkcolor  "#000010"
+set recolor-keephue    true
+set scroll-hstep       5
+set scroll-step        20
+set zoom-step          4
+set scroll-page-aware  true
+
+map u scroll up
+map d scroll down

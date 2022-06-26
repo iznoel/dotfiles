@@ -1,0 +1,126 @@
+set $gap_inner      "10"
+set $gap_horizontal "14"
+set $mode_gap Gaps: [O]uter, [I]nner, [H]orizontal, [V]ertical, [T]op, [R]ight, [B]ottom, [L]eft
+
+# vim:ft=i3config:
+set $mode_gOut      Outer Gaps: [<span foreground='white'>-</span>|<span foreground='white'>=</span>] dec/inc 
+set $mode_gInn      Inner Gaps: (-/+/0 workspace) / default: hold shift
+set $mode_gHor Horizontal Gaps: (-/+/0 workspace) / default: hold shift
+set $mode_gVer   Vertical Gaps: (-/+/0 workspace) / default: hold shift
+set $mode_gTop        Top Gaps: (-/+/0 workspace) / default: hold shift
+set $mode_gRig      Right Gaps: (-/+/0 workspace) / default: hold shift
+set $mode_gBot     Bottom Gaps: (-/+/0 workspace) / default: hold shift
+set $mode_gLef       Left Gaps: (-/+/0 workspace) / default: hold shift
+
+mode "$mode_gap" {
+    bindsym  o  mode "$mode_gOut"
+    bindsym  i  mode "$mode_gInn"
+    bindsym  h  mode "$mode_gHor"
+    bindsym  v  mode "$mode_gVer"
+    bindsym  t  mode "$mode_gTop"
+    bindsym  r  mode "$mode_gRig"
+    bindsym  b  mode "$mode_gBot"
+    bindsym  l  mode "$mode_gLef"
+    bindsym  Return mode "$mode_gap"
+    bindsym  Escape mode "default"
+    bindsym  g        gaps horizontal current toggle $gap_horizontal     \
+                      gaps inner current toggle $gap_inner; mode "default"
+    bindsym  0          \
+        gaps outer      all  set 0 \
+        gaps inner      all  set 0 \
+        gaps left       all  set 0 \
+        gaps right      all  set 0 \
+        gaps top        all  set 0 \
+        gaps bottom     all  set 0 \
+        gaps horizontal all  set 0 \
+        mode "default"
+}
+
+mode "$mode_gOut" {
+    bindsym plus        gaps outer current plus  1
+    bindsym minus       gaps outer current minus 1
+    bindsym 0           gaps outer current set   0
+    bindsym Shift+plus  gaps outer all     plus  1
+    bindsym Shift+minus gaps outer all     minus 1
+    bindsym Shift+0     gaps outer all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gInn" {
+    bindsym plus        gaps inner current plus  1
+    bindsym minus       gaps inner current minus 1
+    bindsym 0           gaps inner current set   0
+    bindsym Shift+plus  gaps inner all     plus  1
+    bindsym Shift+minus gaps inner all     minus 1
+    bindsym Shift+0     gaps inner all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gHor" {
+    bindsym plus        gaps horizontal current plus  1
+    bindsym minus       gaps horizontal current minus 1
+    bindsym 0           gaps horizontal current set   0
+    bindsym Shift+plus  gaps horizontal all     plus  1
+    bindsym Shift+minus gaps horizontal all     minus 1
+    bindsym Shift+0     gaps horizontal all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gVer" {
+    bindsym plus        gaps vertical current plus  1
+    bindsym minus       gaps vertical current minus 1
+    bindsym 0           gaps vertical current set   0
+    bindsym Shift+plus  gaps vertical all     plus  1
+    bindsym Shift+minus gaps vertical all     minus 1
+    bindsym Shift+0     gaps vertical all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gTop" {
+    bindsym plus        gaps top current plus  1
+    bindsym minus       gaps top current minus 1
+    bindsym 0           gaps top current set   0
+    bindsym Shift+plus  gaps top all     plus  1
+    bindsym Shift+minus gaps top all     minus 1
+    bindsym Shift+0     gaps top all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gRig" {
+    bindsym plus        gaps right current plus  1
+    bindsym minus       gaps right current minus 1
+    bindsym 0           gaps right current set   0
+    bindsym Shift+plus  gaps right all     plus  1
+    bindsym Shift+minus gaps right all     minus 1
+    bindsym Shift+0     gaps right all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gBot" {
+    bindsym plus        gaps bottom current plus  1
+    bindsym minus       gaps bottom current minus 1
+    bindsym 0           gaps bottom current set   0
+    bindsym Shift+plus  gaps bottom all     plus  1
+    bindsym Shift+minus gaps bottom all     minus 1
+    bindsym Shift+0     gaps bottom all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+
+mode "$mode_gLef" {
+    bindsym plus        gaps left current plus  1
+    bindsym minus       gaps left current minus 1
+    bindsym 0           gaps left current set   0
+    bindsym Shift+plus  gaps left all     plus  1
+    bindsym Shift+minus gaps left all     minus 1
+    bindsym Shift+0     gaps left all     set   0
+    bindsym Return      mode "$mode_gap"
+    bindsym Escape      mode "default"
+}
+

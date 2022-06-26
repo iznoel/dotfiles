@@ -1,0 +1,64 @@
+
+! fonts {{{1
+Xft.dpi: 64
+Xft.hinting: true
+Xft.antialias: true
+Xft.lcdfilter: lcddefault
+Xft.hintstyle: hintfull
+Xft.rgba: rgb
+
+! colours {{{1
+*.foreground: #FFFFFF
+*.background: #000000
+*.cursorColor: #ccbbaa
+
+*.color0:  #101010
+*.color1:  #AA3333
+*.color2:  #33AA33
+*.color3:  #AA8833
+*.color4:  #3333AA
+*.color5:  #8833CC
+*.color6:  #558888
+*.color7:  #AAAAAA
+*.color8:  #555555
+*.color9:  #FF5555
+*.color10: #55FF55
+*.color11: #FFFF77
+*.color12: #5555FF
+*.color13: #BB66FF
+*.color15: #AAEEEE
+*.color16: #FFFFFF
+
+! Xterm {{{1
+XTerm.borderWidth: 0
+XTerm.termName: xterm-256color
+XTerm.vt100.loginshell: false
+
+! security
+XTerm.vt100.titeInhibit: false
+XTerm.vt100.allowSendEvents: false
+
+! scroll faster
+XTerm.vt100.jumpScroll: true
+XTerm.vt100.fastScroll: true
+XTerm.vt100.multiScroll: true
+
+! sixel
+! XTerm.vt100.numColorRegisters: 256
+! XTerm.vt100.sixelScrolling: true
+
+! Meta characters
+XTerm.vt100.metaSendsEscape: true
+! XTerm*eightbitinput: false
+! XTerm.vt100.eightbitoutput: true
+! XTerm.altisnotmeta: false
+
+XTerm.vt100.Translations: #override \
+  Shift Ctrl <Key> Prior: larger-vt-font()\n\
+  Shift Ctrl <Key> Next: smaller-vt-font()\n
+
+XTerm.vt100.utf8: 2
+*.faceName: Terminus
+XTerm.vt100.faceSize: 20
+XTerm.vt100.allowboldfonts: false
+XTerm.vt100.boldColors: false

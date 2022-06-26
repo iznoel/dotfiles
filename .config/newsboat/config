@@ -1,0 +1,82 @@
+# vim: syn=vim
+# ~/.config/newsboat/urls
+
+auto-reload yes
+reload-time 30
+
+reload-threads 2
+scrolloff 3
+refresh-on-startup no
+always-display-description yes
+max-items 2000
+notify-program "/usr/bin/notify-send"
+prepopulate-query-feeds no
+show-read-feeds yes
+show-read-articles yes
+max-downloads 10
+confirm-exit yes
+suppress-first-reload yes
+show-read-feeds no
+show-read-articles no
+
+bind-key   j   down        all
+bind-key   k   up          all
+bind-key   g   home        all
+bind-key   G   end         all
+bind-key   ^U  pageup      all
+bind-key   ^D  pagedown    all
+bind-key   s   sort
+bind-key   S   rev-sort
+
+bind-key   TAB toggle-show-read-feeds
+
+unbind-key l
+bind-key   l   open
+bind-key   h   quit
+bind-key   ESC quit
+bind-key   /   open-search tagselection
+
+
+unbind-key o
+bind-key o macro-prefix
+macro e set browser "nvim ~/.config/newsboat/config # %u" ; open-in-browser
+macro o set browser "open %u 2>&1 1>/dev/null &" ; open-in-browser
+macro w set browser "tmux split-window w3m %u &>/dev/null 2>&1 & "; open-in-browser
+macro i set browser "w3m %u" ; open-in-browser
+macro m set browser "mpv %u &>/dev/null &" ; open-in-browser
+macro f set browser "qutebrowser %u" ; open-in-browser
+
+feedlist-format           "▌%?l?▶ %-50t %u &%t?%> =====▐"
+articlelist-format        "%D %?f?[%f] &     ?%?T?%-40T | &?%t"
+datetime-format           "%F %T"
+selecttag-format          "%-20T %f/%-3u (%n)"
+
+feedlist-title-format     "FeedList - (%u unread, %t total)%?T? - tag ‘%T&?"
+articlelist-title-format  "ArticleList - Feed %T %u unread, %t total - %U"
+dialogs-title-format      "Dialog %N %V"
+filebrowser-title-format  "FileBrowser - %?O?Open File&Save File? - %f"
+help-title-format         "Help - %N %V"
+itemview-title-format     "ItemView - '%T (%u unread, %t total)"
+notify-format             "Reload finished, %f unread feeds (%n unread articles total)"
+searchresult-title-format "Search result (%u unread, %t total)"
+selectfilter-title-format "Select Filter"
+selecttag-title-format    "Select Tag"
+urlview-title-format      "URLs"
+
+color background         white    color0
+color listnormal         white    color0
+color listfocus          color0   color102
+color listfocus_unread   color0   color102
+color listnormal_unread  color144 color0
+color info               color7   color235
+color article            white    color0
+color end-of-text-marker cyan     default
+
+highlight article "^Feed:.*" color174 default
+highlight article "^Title:.*" color223 default bold
+highlight article "^Author:.*" color114 default
+highlight article "^Links?:.*" color116 default
+highlight article "^Date:.*" color223 default
+highlight article "\\[[0-9][0-9]*\\]" color66 default bold
+highlight article "\\[image [0-9][0-9]*\\]" color109 default bold
+highlight article "\\[embedded flash: [0-9][0-9]*\\]" color66 default bold

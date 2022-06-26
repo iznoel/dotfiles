@@ -1,0 +1,4 @@
+# vim:ft=sh:
+
+PATH+=:~/bin/i3
+exec /usr/bin/i3

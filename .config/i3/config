@@ -1,0 +1,37 @@
+# vim:fdm=marker:ft=i3config:
+
+include ~/.config/i3/theme
+include ~/.config/i3/binds
+
+focus_on_window_activation urgent
+default_border          normal
+default_floating_border normal
+hide_edge_borders       smart
+font                    pango:Terminus 10px
+title_align             left
+# smart_gaps              on
+focus_follows_mouse     no
+floating_modifier       Mod4
+focus_wrapping          force
+popup_during_fullscreen leave_fullscreen
+floating_maximum_size   1024 x 1280
+
+# https://i3wm.org/docs/userguide#command_criteria
+
+for_window [all]                            title_format "%class:%title "
+for_window [all]                            title_window_icon on
+for_window [class="floating"]               floating enable
+for_window [window_type="^((?!normal).)*$"] floating enable
+
+for_window [class="mpv"]               floating enable, border pixel 0
+for_window [title="Android Emulator"]  floating enable
+for_window [class="Steam"]             floating enable
+
+assign [class="Genymotion"]  8: Genymotion
+assign [class="VirtualBox*"] 8: vBox
+assign [class="xfreerdp"]    8: rdp
+assign [class="Steam"]       9: Steam
+assign [title="Zoom.*"]      9: zoom
+
+exec_always --no-startup-id conky
+exec_always --no-startup-id picom --experimental-backends

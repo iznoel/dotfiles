@@ -1,0 +1,6 @@
+# vim:ft=gitconfig
+
+[alias]
+  trash = reset --hard HEAD --
+  edit = ! "mapfile -t all < <(git ls-files \"$@\" |fzf -m) && nvim '+tab ball' \"${all[@]}\""
+  run  = ! exec

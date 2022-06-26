@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+#
+# vim:ts=2:sts=2:sw=2:et:
+# shellcheck disable=SC2034,SC2178 # let me use my damn namerefs
+#
+#   WTFPL
+#
+#   Script:
+#     Yet another url picker for tmux
+#
+#   Install:
+#     1. save as exacutible
+#     2. in tmux.conf add a bind like:
+#         "bind -T prefix C-u if -b 'this_script' '' ''"
+#
+#   Depends:
+#     tmux 3.2, fzf
+#
+#   Optional:
+#     tsp, mpv, feh, qutebrowser, xclip, w3m
+#
+#   Configuration:  edit 'picker' manually.
+#     1. openers contains title.
+#     2. case at the bottom handles pick.
+
+set -uevx
+
+ok='[a-zA-Z0-9_.~%:+-]'
+dm='[a-zA-Z0-9-]+'
+tld='[a-zA-Z]{2,4}'
+declare -a tmp=(
+  "("
+  "([a-zA-Z]+://)?($dm\.)+"
+  "$tld(\.$tld){,3}(:[0-9]{,5})?"
+  "((/$ok*)*"
+  "((\?$ok+(=$ok+(&$ok+(=$ok+)?)*)?)?(#$ok+)?|/))?"
+  ")[^a-zA-Z0-9_.~%:+-]"
+)
+printf -v url_pattern "%s" "${tmp[@]}"
+declare -r url_pattern
+unset ok dm tld tmp
+
+# library {{{1
+function __picker_popup
+{
+  set -o pipefail
+  trap '
+    tmux delete-buffer -b "picker_o_${snr}";
+    tmux delete-buffer -b "picker_i_${snr}";
+  ' pipe err
+  tmux show-buffer -b "picker_i_${snr}" \
+    | "${filter_cmd[@]}" \
+    | tmux load-buffer -b "picker_o_${snr}" -
+}
+
+function picker_popup_run
+{
+  local -n arr_out="$1"
+  local -i snr="${RANDOM}"
+  local -a filter_cmd=(
+    fzf -m --no-sort --tac
+    --preview-window='top:5,border-none'
+    --preview="tmux show -gv @full_url_capture | grep -wGC 2 --color=always {}"
+  )
+
+  trap '
+    tmux delete-buffer -b "picker_o_${snr}";
+    tmux delete-buffer -b "picker_i_${snr}";
+  ' return int quit
+
+  tmux load-buffer -b "picker_i_${snr}" -
+
+  mapfile -t arr_out < <(
+  2>/dev/null tmux \
+    display-popup -w95% -E "
+      $(declare -f __picker_popup);
+      $(declare -p snr filter_cmd);
+      __picker_popup" \;\
+    show-buffer -b "picker_o_${snr}" \
+    || kill -s pipe $$
+  )
+
+  # printf -v check "%s" "${arr_out[@]//[[:space:]]/}"
+  # (( ${#check} ))
+}
+
+
+function picker_menu_run
+{
+  local -n out="$1"
+  local -n opts="$2"
+  local snr="${RANDOM}" title=" ${title:-picker} "
+  local -a menu_cmd
+
+  trap 'tmux set -gu "@pick_${snr}"' return int quit
+
+  for key in "${!opts[@]}"; do
+    menu_cmd+=( "${opts[$key]}" "${key}" "set -g @pick_${snr} ${opts[$key]@Q}" )
+  done
+
+  read -r out < <(
+    2>/dev/null tmux \
+      display-menu -T "$title" "${menu_cmd[@]}" \;\
+      show -gv "@pick_${snr}"  # show-option always returns 0 for user-options.
+  )
+
+  (( ${#out} ))
+}
+
+
+# functions {{{1
+function capture_pane
+{
+  local -n out="$1"
+  local -a _lines line
+  local active_pane buf buf_pretty
+  local -i __MAP_MAX=1000 __MAP_CUR=0
+
+  active_pane="$(tmux display-message -pF "#W")"
+
+  if [[ $active_pane == weechat ]]; then
+    tmux send-keys 'm-l'
+    read -rt .03 <> <(:) || :
+    buf=$(tmux capture-pane -pJ -S- -E-)
+    buf_pretty=$(tmux capture-pane -epJ -S- -E-)
+    tmux send-keys 'm-l'
+  else
+    buf=$(tmux capture-pane -pJ -S- -E-)
+    buf_pretty=$(tmux capture-pane -epJ -S- -E-)
+  fi
+  mapfile -t _lines <<< "$buf"
+  tmux set -g @full_url_capture "${buf_pretty:?Why is this unset}"
+
+  for line in "${_lines[@]}"; do
+    while [[ " $line " =~ $url_pattern ]]; do
+      (( ++__MAP_CUR > __MAP_MAX )) && return 5
+      out+=$'\n'"${BASH_REMATCH[1]// /}"  # bug, there shouldn't be spaces here.
+      line=${line#*${BASH_REMATCH[1]// /}}
+    done
+  done ; out=$(awk '!s[$0]++' <<< "$out")
+}
+
+
+function picker
+{
+  local opener open_type
+  local url url_list urls
+  local -a tmux_cmd _lines
+
+  local -A openers=(
+    [s]='split with w3m'
+    [q]='qutebrowser'
+    [y]='xclip'
+    [m]='mpv'
+    [f]='feh'
+  )
+
+  local -A open_opts=(
+    [h]=left [j]=down
+    [k]=up   [l]=right
+    [H]=LEFT [J]=DOWN
+    [K]=UP   [L]=RIGHT
+    [c]='dedicated Window'
+    [s]='dedicated Session'
+  )
+
+  trap 'tmux set -gu @full_url_capture' int err exit
+  capture_pane urls
+  picker_popup_run url_list <<< "${urls#$'\n'}" || return 15
+  picker_menu_run opener openers || return 15
+
+  if [[ "$opener" == *split* ]]; then
+    picker_menu_run open_type open_opts || return 15
+    case "$open_type" in
+    left)     tmux_cmd=( split-w    -h    -l80 -b ) ;;
+    down)     tmux_cmd=( split-w       -v         ) ;;
+    up)       tmux_cmd=( split-w       -v      -b ) ;;
+    right)    tmux_cmd=( split-w    -h    -l80    ) ;;
+    LEFT)     tmux_cmd=( split-w -f -h    -l80 -b ) ;;
+    DOWN)     tmux_cmd=( split-w -f    -v         ) ;;
+    UP)       tmux_cmd=( split-w -f    -v      -b ) ;;
+    RIGHT)    tmux_cmd=( split-w -f -h    -l80    ) ;;
+    *Window)  tmux_cmd=() ;;  # TODO
+    *Session) tmux_cmd=() ;;  # TODO
+    esac
+  fi
+
+  ### TODO ###
+  case "$opener" in
+  xclip)
+    xclip -sel clip -i < <(printf "%s\n" "${url_list[@]}")
+    ;;
+  mpv)
+    for url in "${url_list[@]}"; do
+      tsp mpv --class floating --geometry=600x400-10-10 "$url"
+    done
+    ;;
+  feh)
+    for url in "${url_list[@]}"; do
+      curl -k -o- "$url" | feh --class floating -. --geometry=600x400+1+1 -
+    done
+    ;;
+  qutebrowser)
+    if pgrep qutebrowser; then
+      for url in "${url_list[@]}"; do
+        qutebrowser "$url" &>/dev/null
+      done
+    else
+      setsid qutebrowser "${url_list[@]}" &>/dev/null
+    fi
+    ;;
+  split*w3m)
+    if (( ${#url_list[@]} > 0 )); then
+      for url in "${url_list[@]}}"; do
+        tmux "${tmux_cmd[@]}" w3m "${url_list[0]}"
+      done
+    fi
+    ;;
+  esac
+}
+
+
+# }}}
+
+
+picker
+

@@ -1,0 +1,19 @@
+#!/bin/bash
+# rotate tty nr * 90 degrees right
+
+fThisTerm=/sys/class/graphics/fbcon/rotate
+fAllTerms=/sys/class/graphics/fbcon/rotate_all
+
+(( UID )) && { exec sudo "$0" "$@" || exit; }
+
+# @arg -a: apply to all framebuffer devices
+while getopts a opt; do
+  case $opt in
+    a) device_file=$fAllTerms ;;
+  esac
+done ; shift $((OPTIND-1))
+
+: "${device_file:=$fThisTerm}"
+: "${rotation:=${1:-$(( ($(<"$device_file")+1)%4 ))}}"
+
+echo "$rotation" > "$device_file"

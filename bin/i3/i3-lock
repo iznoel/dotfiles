@@ -1,0 +1,32 @@
+#!/bin/bash
+
+tmpfile=/tmp/scr.png
+filters=(
+  -scale 20%
+  -brightness-contrast -20/-30
+  -fx '(r*2+g/2+b/2)/3'
+  -scale 500%
+)
+
+lockopts=(
+  --redraw-thread --no-unlock-indicator --clock --ignore-empty-password
+  --time-font=Terminus --timesize=300 --timecolor=#999999 --timepos='x+w/2:y+h/7'
+  --date-font=Terminus --datesize=150 --datecolor=#ffffff --datepos='x+w/2:y+h/6'
+)
+
+function revert
+{
+  xset dpms 0 0 1800
+  rm "$tmpfile"
+} &>/dev/null
+
+function lock
+{
+  rm "$tmpfile"
+  xset +dpms dpms 0 0 5
+  ( umask 077; scrot - | convert - "${filters[@]}" "$tmpfile" )
+  i3lock --nofork -i "$tmpfile" "${lockopts[@]}"
+} &>/dev/null
+
+trap revert HUP INT TERM EXIT
+lock

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# snaps floating windows to edge of the screen
+# TODO: Border width does not count towards position
+
+mapfile -t xprproot < <(xprop -root)
+for REPLY in "${xprproot[@]}"; do
+  [[ "$REPLY" = *"_NET_ACTIVE_WINDOW(WINDOW)"* ]] \
+  && win=${win:=${REPLY##* }}
+done
+
+mapfile -t xwininfo < <(xwininfo -id "$win")
+mapfile -t xwinroot < <(xwininfo -root)
+
+for REPLY in "${xwinroot[@]}"; do
+  [[ "$REPLY" = *Width*  ]] && dw=${dw:=${REPLY##* }}
+  [[ "$REPLY" = *Height* ]] && dh=${dh:=${REPLY##* }}
+done
+
+for REPLY in "${xwininfo[@]}"; do
+  [[ "$REPLY" = *Absolute*X* ]] && x=${x:=${REPLY##* }}
+  [[ "$REPLY" = *Absolute*Y* ]] && y=${y:=${REPLY##* }}
+  [[ "$REPLY" = *Relative*X* ]] && x=$(( x - ${REPLY##* } ))
+  [[ "$REPLY" = *Relative*Y* ]] && y=$(( y - ${REPLY##* } ))
+  [[ "$REPLY" = *Width*      ]] && w=${w:=${REPLY##* }}
+  [[ "$REPLY" = *Height*     ]] && h=${h:=${REPLY##* }}
+done
+
+(( ve=dh-h, he=dw-w, vm=ve/2, hm=he/2 ))
+
+case "$1" in
+  left)   ((x = x <= hm ? 0  : hm)) ;;
+  down)   ((y = y >= vm ? ve : vm)) ;;
+  up)     ((y = y <= vm ? 0  : vm)) ;;
+  right)  ((x = x >= hm ? he : hm)) ;;
+  center) ((x = he/2, y = ve/2)) ;;
+  hor)    ((x = he/2)) ;;
+  ver)    ((y = ve/2)) ;;
+esac
+
+exec i3-msg "move absolute position $x $y"

@@ -1,0 +1,3 @@
+# vim:ft=sh:
+
+exec /usr/bin/emacs -fs -f ~/.emacs.d/exwm.el

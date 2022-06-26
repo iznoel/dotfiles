@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# container chain to currently focused item
+# i3-msg -t get_tree | jq -r '
+# getpath(paths(..|objects|select(.focused))) | objects | "\(.id), \(.name)"
+# '
+
+flatten='
+# def pad($len): tostring | .[0:$len-5] | . + " " * ($len-length) ;
+  def makeLineInfo:
+      " #!# "
+      + "con_id=\(.id)"
+      + if .window != null     then "; id=\(.window)" else "" end
+      + if (.marks|length) > 0 then "; marks=( \(.marks|@sh) )" else "" end
+  ;
+
+  def makeLine($y):
+      . as $this
+      | if .window != null        then " "*$y + "- \(.window_properties.class)(\(.marks|@sh)): \(.name)"
+        elif .type == "workspace" then " "*$y + "workspace[\"\(.name)\"](\(.layout)): \(.marks|@sh)"
+        elif .type == "con"       then " "*$y + "container(\(.layout)): \(.marks|@sh)"
+        elif .type == "output"    then " "*$y + "output: \(.marks|@sh)    \(.name)"
+        else "Well This is unexpected  \(.|tostring)" end
+      # + " "*300 + makeLineInfo
+      | ($this.id|" "+tostring)
+      + if $this.focused then " --> " + .[2:] else " | " + . end
+  ;
+
+  def i3_descend_nodes($y):
+      makeLine($y), (
+          if .type == "output"
+          then .nodes[] | select(.name == "content")
+          else .nodes[]
+          end
+      | i3_descend_nodes($y+2) )
+  ;
+
+  .nodes[]
+  | [ select(.name != "__i3") ]
+  | if length > 1 then .[] else
+      .[] | .nodes[] | select(.name == "content") | .nodes[]
+  end
+
+  | i3_descend_nodes(0) 
+'
+
+read -r reply < <(i3-msg -t get_tree|jq -r "$flatten"|dmenu -i -l 50) || exit
+[[ $reply =~ [[:space:]]*([[:digit:]]*).* ]] || exit
+i3-msg "[con_id=${BASH_REMATCH[1]}] focus"

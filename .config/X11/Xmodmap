@@ -1,0 +1,4 @@
+! map capslock to shift
+clear lock
+keycode 66 = Shift_L
+

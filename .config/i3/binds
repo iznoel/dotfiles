@@ -1,0 +1,211 @@
+# vim:fdm=marker:ft=i3config:
+
+#
+# Links
+# -----
+#
+#  https://i3wm.org/docs/userguide.html
+#  https://github.com/i3/i3
+#
+# How to get 'keycodes'
+# ---------------------
+#
+#   xev | sed -n '/keycode/{s/.*keycode /keycode[/;s/ .*/]/;p}'
+#
+# Some keys of note:
+#
+#   keycode  43: ???
+#   keycode  49: backspace
+#   keycode  47: tab
+#   keycode  22: backtick
+#   keycode 107: prtscrn
+#
+
+
+set $ctrl     Control
+set $mod      Mod4
+set $alt      Mod1
+set $exec     exec --no-startup-id
+set $i3_input exec --no-startup-id i3-input --font "pango:Terminus 20px"
+set $step     50
+
+bindsym $mod+q kill
+
+bindsym  XF86AudioRaiseVolume $exec pactl set-sink-volume @DEFAULT_SINK@ +1%
+bindsym  XF86AudioLowerVolume $exec pactl set-sink-volume @DEFAULT_SINK@ -1%
+bindsym  XF86AudioMute        $exec pactl set-sink-mute   @DEFAULT_SINK@ toggle
+
+bindsym  $mod+Return          $exec st -c floating -g 120x40
+bindsym  $mod+Shift+Return    $exec st
+
+bindsym  $mod+d               $exec dm dmenu
+bindsym  $mod+shift+i         $exec "killall unclutter; xmouseless; unclutter"
+bindsym  $mod+shift+d         $exec dmenu-xdesk
+bindsym  $mod+shift+e         $exec dmenu-xdesk --edit
+bindsym  $mod+$alt+p          $exec passmenu
+bindsym  $mod+c               $exec reverse-window-color
+
+bindcode 107                  $exec grab
+bindsym  $mod+g               $exec grab interactive
+bindsym  $mod+b               $exec i3-window-tree
+bindsym  $mod+a               $exec i3-focus-urgent
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Shift+h move left  $step
+bindsym $mod+Shift+j move down  $step
+bindsym $mod+Shift+k move up    $step
+bindsym $mod+Shift+l move right $step
+bindsym $mod+$alt+h $exec i3-snap-window left
+bindsym $mod+$alt+j $exec i3-snap-window down
+bindsym $mod+$alt+k $exec i3-snap-window up
+bindsym $mod+$alt+l $exec i3-snap-window right
+
+bindsym $mod+$ctrl+h       resize shrink width  $step px
+bindsym $mod+$ctrl+j       resize grow   height $step px
+bindsym $mod+$ctrl+k       resize shrink height $step px
+bindsym $mod+$ctrl+l       resize grow   width  $step px
+bindsym $mod+$ctrl+Shift+h resize shrink width  1 px
+bindsym $mod+$ctrl+Shift+j resize grow   height 1 px
+bindsym $mod+$ctrl+Shift+k resize shrink height 1 px
+bindsym $mod+$ctrl+Shift+l resize grow   width  1 px
+
+bindsym $mod+shift+g bar mode toggle
+bindsym $mod+f fullscreen toggle
+bindsym $mod+w layout toggle stacking tabbed
+bindsym $mod+e layout toggle split vsplit
+bindsym $mod+v split  toggle
+
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space       focus mode_toggle
+
+bindsym $mod+$ctrl+p focus parent
+bindsym $mod+$ctrl+n focus child
+# Move child container up beside (after) the parent
+bindsym $mod+$ctrl+o \
+  focus parent, focus parent, mark --add b, \
+  focus child,  focus child,  move container to mark b, \
+  focus parent, mark --toggle b, focus child
+
+bindsym $mod+i       border toggle
+bindsym $mod+u       sticky toggle, border normal
+bindsym $mod+Shift+o move scratchpad
+bindsym $mod+o       scratchpad show
+
+bindsym $mod+1   $exec i3-focus-ws-or-cycle-win 1
+bindsym $mod+2   $exec i3-focus-ws-or-cycle-win 2
+bindsym $mod+3   $exec i3-focus-ws-or-cycle-win 3
+bindsym $mod+4   $exec i3-focus-ws-or-cycle-win 4
+bindsym $mod+5   $exec i3-focus-ws-or-cycle-win 5
+bindsym $mod+6   $exec i3-focus-ws-or-cycle-win 6
+bindsym $mod+7   $exec i3-focus-ws-or-cycle-win 7
+bindsym $mod+8   $exec i3-focus-ws-or-cycle-win 8
+bindsym $mod+9   $exec i3-focus-ws-or-cycle-win 9
+bindsym $mod+0   $exec i3-focus-ws-or-cycle-win 10
+bindsym $mod+n   workspace next
+bindsym $mod+p   workspace prev
+bindsym $mod+Tab workspace back_and_forth
+
+bindsym $mod+Shift+1   move container to workspace number 1
+bindsym $mod+Shift+2   move container to workspace number 2
+bindsym $mod+Shift+3   move container to workspace number 3
+bindsym $mod+Shift+4   move container to workspace number 4
+bindsym $mod+Shift+5   move container to workspace number 5
+bindsym $mod+Shift+6   move container to workspace number 6
+bindsym $mod+Shift+7   move container to workspace number 7
+bindsym $mod+Shift+8   move container to workspace number 8
+bindsym $mod+Shift+9   move container to workspace number 9
+bindsym $mod+Shift+0   move container to workspace number 10
+bindsym $mod+Shift+n   move container to workspace next;           workspace  next
+bindsym $mod+Shift+p   move container to workspace prev;           workspace  prev
+bindsym $mod+Shift+Tab move container to workspace back_and_forth; workspace  back_and_forth
+
+# Modes
+
+bindsym  $mod+Escape mode "$none"
+bindcode $mod+49     mode "$backtick_menu"
+bindcode $mod+22     mode "$backspace_menu"
+
+set $none <span color='orange' weight='heavy' font_family='monospace'>Passthrough mode</span>: hit [$mod+esc]
+mode --pango_markup "$none" {
+    bindsym $mod+Escape mode "default"
+}
+
+
+set $backtick_menu <span color='orange' weight='heavy' font_family='monospace'>Main</span>\
+: <span color='green'>E</span>mpty window \
+| <span color='green'>M</span>arks mode \
+| <span color='green'>W</span>orkspaces mode \
+| <span color='green'>(repeat)</span> Mouse mode
+mode --pango_markup "$backtick_menu" {
+  bindcode $mod+49 mode "default"
+  bindsym  Escape  mode "default"
+  bindsym  Return  mode "default"
+  bindsym  w       mode "$workspaces"
+  bindsym  m       mode "$marks"
+  bindcode 49      $exec "killall unclutter; xmouseless; i3-msg exec unclutter"; mode "default"
+  bindsym  e       open; mode "default"
+}
+
+
+set $workspaces <span color='orange' weight='heavy' font_family='monospace'>workspace</span>\
+: <span color='green'>R</span>ename \
+| <span color='green'>G</span>oto \
+| <span color='green'>M</span>ove
+mode --pango_markup "$workspaces" {
+  bindsym Escape mode "default"
+  bindsym Return mode "default"
+  bindsym g      $i3_input -P ' Goto Workspace: '      -F 'workspace "%s"'; mode "default"
+  bindsym m      $i3_input -P ' Move to Workspace: '   -F 'move container to workspace "%s"'; mode "default"
+  bindsym r      $i3_input -P ' Rename Workspace to: ' -F 'rename workspace to "%s"'; mode "default"
+}
+
+
+set $marks <span color='orange' weight='heavy' font_family='monospace'>marks</span>\
+: <span color='green'>G</span>oto \
+| <span color='green'>A</span>dd \
+| <span color='green'>M</span>ove \
+| <span color='green'>R</span>emove
+mode --pango_markup "$marks" {
+    bindsym Escape mode "default"
+    bindsym Return mode "default"
+    bindsym g      $i3_input -P 'to mark: ' -F '[con_mark="%s"] focus'; mode "default"
+    bindsym a      $i3_input -P 'mark as: ' -F 'mark "%s"'; mode "default"
+    bindsym m      $i3_input -P 'move to which mark: ' -F 'move container to mark "%s"'; mode "default"
+    bindsym r      $i3_input -P 'remove which mark: '  -F 'unmark "%s"';  mode "default"
+}
+
+
+set $backspace_menu <span color='orange' weight='heavy' font_family='monospace'>aux</span>\
+: <span color='green'>L</span>ock \
+| <span color='green'>E</span>xit \
+| <span color='green'>+R</span>estart \
+| <span color='green'>R</span>eload \
+| <span color='green'>(repeat)</span> aux mode (2)
+mode --pango_markup "$backspace_menu" {
+    bindsym  Escape   mode "default"
+    bindsym  Return   mode "default"
+    bindcode $mod+22  mode "$backspace_menu2"
+    bindsym  Shift+R  restart; mode "default"
+    bindsym  R        reload; mode "default"
+    bindsym  l        $exec i3-lock; mode "default"
+    bindsym  E        $exec i3-nagbar -t warning -f 'pango:Terminus 20px' \
+                      -m 'Do you really want to exit i3? ' \
+                      -b 'Yes,   exit i3' 'i3-msg exit'
+    # bindsym  g        mode "$mode_gap"
+}
+
+
+set $backspace_menu2 <span color='orange' weight='heavy' font_family='monospace'>aux2</span>\
+: open in <span color='green'>M</span>pv \
+| <span color='green'>V</span>olume
+mode --pango_markup "$backspace_menu2" {
+    bindsym  Escape   mode "default"
+    bindsym  Return   mode "default"
+    bindcode $mod+22  mode "default"
+    bindsym  m        $exec sh -c 'setsid mpv --volume=50 "$(xclip -sel clip -o)"'; mode default
+    bindsym  v        $exec st -c floating -e 'alsamixer'; mode default
+}
+

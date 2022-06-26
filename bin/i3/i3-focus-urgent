@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+mapfile -t prev < <(
+  i3-msg -t get_tree | jq -r '..|select(.marks?|index("(prev)")).id'
+)
+
+if (( ${#prev[@]} )); then
+  i3-msg "[con_id=${prev[0]%%:*}] focus, mark --toggle (prev)"
+else
+  mapfile -t urgent < <(
+    i3-msg -t get_tree \
+    | jq -r '..|select(.urgent? and .name? and .type == "con")|"\(.id): \(.name)"'
+  ) || exit 1
+
+  case ${#urgent[@]} in
+    0) exit 2 ;;
+    1) choice=${urgent[0]%%:*} ;;
+    *) read -r choice < <(printf "%s\n" "${REPLY[@]}" | dmenu -l 10) || exit ;;
+  esac
+
+  i3-msg "mark --add (prev); [con_id=$choice] focus"
+fi

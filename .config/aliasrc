@@ -1,0 +1,86 @@
+# vim: ft=sh:
+
+alias grep="grep --color=always"
+alias less="less -iR"
+alias mon_off='xset dpms force off'
+alias tree="tree -aCI .git --gitignore"
+alias pass='EDITOR="nvim -u NONE" pass'
+
+alias dp="tmux display -p"
+alias dpv="tmux display -pv"
+
+alias ls='TIME_STYLE=+%F command ls --color=auto --group-directories-first -FH'
+alias ll='TIME_STYLE=+%F command ls --color=auto --group-directories-first -FHhlp'
+alias lt='TIME_STYLE=+%F command ls --color=auto --group-directories-first -FHhlpt'
+
+
+__load_completion git &>/dev/null
+alias pit='GIT_DIR=~/.dotfiles GIT_WORK_TREE=~ git'
+complete -o bashdefault -o default -o nospace -F __git_wrap__git_main pit
+
+function jless
+{
+  jq -C "$@" | less
+}
+
+function banner
+{
+  local -a lines
+  local -i i=0
+  # eval printf '%.0s=' "{1..$COLUMNS}"
+  mapfile -t lines < <(paste -d '|' \
+    <(cal --color=always|sed '/^\s*$/d') \
+    <(echo Dotfiles; pit -c color.status=always status -s || :) \
+  )
+  for ((;i<${#lines[@]};i++)); do
+    [[ -n "${lines[$i]//[[:blank:]]/}" ]] && echo "${lines[$i]}"
+  done | column -ts '|' -o '|'
+  eval printf '%.0s=' "{1..$COLUMNS}"
+}
+
+function webcam
+{
+  device=${1:-/dev/video0}
+  mpv "av://v4l2:$device" --geometry=300x300 --profile=low-latency -untimed &>/dev/null &
+  disown
+}
+
+function feh
+{
+  command feh -d --class floating -g 300x300 -. "$@"
+}
+
+function graph {
+  dot -Tpng "$@" | setsid feh --class=floating -. - &>/dev/null &
+} &>/dev/null
+
+function mpv
+{
+  if [[ $1 == http*(s)://* ]]; then
+    command mpv --volume=80 --ytdl-raw-options=format=worst "$@"
+  else
+    command mpv --volume=80 "$@"
+  fi
+}
+
+function tcd
+{
+  (( "${NNNLVL:-0}" > 0 )) && {
+    echo "nnn is already running"
+    return
+  }
+  declare -x NNN_TMPFILE=${NNN_TMPFILE:-"$HOME/.config/nnn/.lastd"}
+  local   -- OPWD=$PWD
+
+  [[ -f "$NNN_TMPFILE" ]] && rm -f "$NNN_TMPFILE" &> /dev/null
+  nnn
+  [[ -f "$NNN_TMPFILE" ]] || return 1
+  . "$NNN_TMPFILE"
+  rm -f "$NNN_TMPFILE" &> /dev/null
+  [[ $OPWD != "$PWD" ]]
+}
+
+function w3m
+{
+  command w3m "${@:-file:///cgi-bin/aggregate_bookmarks.cgi}"
+}

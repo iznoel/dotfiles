@@ -1,0 +1,47 @@
+# vim:fdm=marker:ft=i3config:
+
+set_from_resource $c0 i3wm.color0     #101010
+set_from_resource $c1 i3wm.color1     #8C4665
+set_from_resource $c2 i3wm.color2     #287373
+set_from_resource $c3 i3wm.color3     #7C7C99
+set_from_resource $c4 i3wm.color4     #395573
+set_from_resource $c5 i3wm.color5     #5E468C
+set_from_resource $c6 i3wm.color6     #31658C
+set_from_resource $c7 i3wm.color7     #899CA1
+set_from_resource $c8 i3wm.color8     #3D3D3D
+set_from_resource $c9 i3wm.color9     #BF4D80
+set_from_resource $ca i3wm.color10    #53A6A6
+set_from_resource $cb i3wm.color11    #9E9ECB
+set_from_resource $cc i3wm.color12    #477AB3
+set_from_resource $cd i3wm.color13    #7E62B3
+set_from_resource $ce i3wm.color14    #6096BF
+set_from_resource $cf i3wm.color15    #C0C0C0
+set_from_resource $bg i3wm.background #000000
+set_from_resource $fg i3wm.foreground #FFFFFF
+
+bar {
+  i3bar_command i3bar
+  status_command slstatus -s
+  position bottom
+  # height 16
+  colors {
+    background   $bg
+    statusline   $fg
+    separator    $bg
+
+    #Resource          BR  BG  FG
+    binding_mode       $bg $bg $fg
+    urgent_workspace   $fg $c9 $fg # alert
+    focused_workspace  $ce $fg $ce # current
+    active_workspace   $c7 $c8 $b3 # default - visible on some output
+    inactive_workspace $c7 $c8 $b7 # default - hidden
+  }
+}
+
+#Resource               BR  BG  TXT IND CBR
+client.focused          $ce $fg $ce $fg $ce # Current
+client.placeholder      $ce $c8 $fg $f8 $ce # no window
+client.focused_inactive $c7 $c7 $fg $f8 $c7 # focused in container
+client.unfocused        $c8 $c8 $c7 $c8 $c8 # default
+client.urgent           $c9 $c1 $cf $cf $c9 # alert
+client.background           $bg             # before window shows up

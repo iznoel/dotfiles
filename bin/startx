@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+export WM
+PS3='Window Manager: '
+select WM in i3 dwm awesome exwm dwm bsp; do
+  exec /usr/bin/startx
+done

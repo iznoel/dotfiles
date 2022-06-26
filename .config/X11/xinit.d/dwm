@@ -1,0 +1,4 @@
+# vim:ft=sh:
+
+dwm_status -s | xrootname_pipe &
+exec /usr/local/bin/dwm

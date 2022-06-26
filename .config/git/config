@@ -1,0 +1,42 @@
+
+#
+# Notes
+# --------
+#
+# https://github.com/gitconfig/gitconfig/blob/master/.gitconfig
+# https://git-scm.com/docs/git-config#_conditional_includes
+# 
+
+[init]
+  defaultBranch = master
+
+[color]
+  ui = auto
+
+[core]
+  excludesfile = ~/.config/git/ignore
+  pager = bat
+
+[include]
+  path = ~/.config/git/config.private
+
+[includeIf "gitdir:~/.dotfiles"]
+  path = ~/.config/git/config.dotfiles
+
+[alias]
+  br = "!git for-each-ref --format='%(committerdate:short),%(authorname),%(refname:short)' --sort=committerdate refs/heads/ | column -t -s ','"
+  uncommit = reset --soft HEAD^
+  untrack = rm --cached --
+  unstage = reset HEAD --
+  diff-staged = diff --cached
+  graph = log --all --decorate --oneline --graph
+  lsa = ls-tree --full-tree -r --name-only HEAD
+  ls = ls-files
+  st = status
+  ca = commit --amend
+  sl = stash list
+  sa = stash apply
+  ss = stash save
+
+[diff]
+  tool = vimdiff

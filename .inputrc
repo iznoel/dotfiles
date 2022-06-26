@@ -1,0 +1,46 @@
+$if term=linux
+  set vi-ins-mode-string \1\e[?0c\2
+  set vi-cmd-mode-string \1\e[?8c\2
+$else
+  set vi-ins-mode-string \1\e[2\ q\2
+  set vi-cmd-mode-string \1\e[4\ q\2
+$endif
+
+set blink-matching-paren         on
+set colored-completion-prefix    on
+set colored-stats                on
+set completion-ignore-case       on
+set echo-control-characters      off
+set mark-directories             off
+set mark-symlinked-directories   off
+set menu-complete-display-prefix off
+set page-completions             off
+set show-all-if-ambiguous        on
+set show-all-if-unmodified       on
+set skip-completed-text          on
+set visible-stats                on
+
+set keymap         emacs
+set editing-mode   emacs
+set keyseq-timeout 100
+
+"\ek":  history-search-backward
+"\e[A": history-search-backward
+"\ej":  history-search-forward
+"\e[B": history-search-forward
+"\C-n": forward-search-history
+"\C-p": reverse-search-history
+"\e[P": delete-char
+"\C-h": backward-delete-char
+"\C-d": downcase-word
+"\e\C-h": delete-char
+
+# 'menu-complete' always preferable to 'complete'
+"\C-i": menu-complete
+"\eh":  menu-complete
+"\el":  menu-complete-backward
+
+
+# emacs-line mark operation
+"\C-x\ew":  copy-region-as-kill
+"\C-x\C-w": kill-region
