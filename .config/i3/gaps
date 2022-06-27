@@ -1,8 +1,8 @@
+# vim:ft=i3config:
 set $gap_inner      "10"
 set $gap_horizontal "14"
 set $mode_gap Gaps: [O]uter, [I]nner, [H]orizontal, [V]ertical, [T]op, [R]ight, [B]ottom, [L]eft
 
-# vim:ft=i3config:
 set $mode_gOut      Outer Gaps: [<span foreground='white'>-</span>|<span foreground='white'>=</span>] dec/inc 
 set $mode_gInn      Inner Gaps: (-/+/0 workspace) / default: hold shift
 set $mode_gHor Horizontal Gaps: (-/+/0 workspace) / default: hold shift

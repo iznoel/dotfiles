@@ -9,7 +9,6 @@ default_floating_border normal
 hide_edge_borders       smart
 font                    pango:Terminus 10px
 title_align             left
-# smart_gaps              on
 focus_follows_mouse     no
 floating_modifier       Mod4
 focus_wrapping          force
@@ -21,7 +20,6 @@ floating_maximum_size   1024 x 1280
 for_window [all]                            title_format "%class:%title "
 for_window [all]                            title_window_icon on
 for_window [class="floating"]               floating enable
-for_window [window_type="^((?!normal).)*$"] floating enable
 
 for_window [class="mpv"]               floating enable, border pixel 0
 for_window [title="Android Emulator"]  floating enable
