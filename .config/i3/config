@@ -34,4 +34,4 @@ assign [title="Zoom.*"]      9: zoom
 
 exec_always --no-startup-id conky
 exec_always --no-startup-id picom --experimental-backends
-exec_always --no-startup-id i3-workspace-switcher.py
+exec_always --no-startup-id i3-nop-ws.py

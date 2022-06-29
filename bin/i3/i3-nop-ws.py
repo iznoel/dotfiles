@@ -18,7 +18,7 @@ bindsym $mod+1 nop ws num 1 or scratchpad hide
 
 Example config
 --------------
-exec_always --no-startup-id i3-smarter-workspace.py
+exec_always --no-startup-id i3-nop-ws.py
 """
 
 class ws_switcher:
