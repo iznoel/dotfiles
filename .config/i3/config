@@ -20,7 +20,7 @@ include ~/.config/i3/binds
 
 for_window [all]                            title_format "%class:%title "
 for_window [all]                            title_window_icon on
-for_window [class="floating|Floating"]      floating enable
+for_window [class="floating|Floating"]               floating enable
 
 for_window [class="mpv"]               floating enable, border pixel 0
 for_window [title="Android Emulator"]  floating enable
@@ -34,3 +34,4 @@ assign [title="Zoom.*"]      9: zoom
 
 exec_always --no-startup-id conky
 exec_always --no-startup-id picom --experimental-backends
+exec_always --no-startup-id i3-workspace-switcher.py
