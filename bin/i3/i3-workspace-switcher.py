@@ -2,8 +2,9 @@
 
 from i3ipc import Connection, Event, events
 from functools import reduce
-from typing import Callable
+from collections.abc import Callable
 import os, fcntl
+
 
 """
 Example config
@@ -24,15 +25,12 @@ exec_always --no-startup-id i3-smarter-workspace.py
 """
 
 class ws_switcher:
-    def __init__(self, conn: Connection, lock: Callable[[os.PathLike], object]):
+    def __init__(self, conn: Connection,
+            lock: Callable[[os.PathLike], object]):
         self.locked = lock(f"{conn.socket_path}.ws-switcher.lock")
         self.ws = reduce(lambda a, v: v.num if v.focused else a,
             conn.get_workspaces(), 0)
         conn.on(Event.BINDING, self.route_bind)
-        conn.on(Event.WORKSPACE_FOCUS, self.on_ws_change)
-
-    def on_ws_change(self, ipc: Connection, event: events.WorkspaceEvent):
-        self.ws = event.ipc_data['current']['num']
 
     def route_bind(self, ipc: Connection, event: events.BindingEvent):
         bind = event.ipc_data['binding']['command']
@@ -44,7 +42,8 @@ class ws_switcher:
 
     def to_workspace(self, ipc: Connection, ws: int):
         if self.ws != ws:
-            return ipc.command(fr'workspace number {ws}')
+            ipc.command(f'workspace number {ws}')
+            self.ws = ws
         windows = [con
             for output in ipc.get_tree()   if output.name != '__i3'
             for ws     in output.nodes     if ws.num      == self.ws
@@ -52,7 +51,7 @@ class ws_switcher:
         if len(windows) > 1:
             next = reduce(lambda a, v: v[1].id if windows[v[0]-1].focused
                     else a, enumerate(windows), 0)
-            return ipc.command(fr'[con_id={next}] focus')
+            return ipc.command(f'[con_id={next}] focus')
 
 
 def flock(fname: os.PathLike):
@@ -66,9 +65,8 @@ if __name__ == "__main__":
         i3conn = Connection()
         ws_switcher(conn=i3conn, lock=flock)
         print("Starting")
-        i3conn.on(Event.SHUTDOWN, exit)
+        i3conn.on(Event.SHUTDOWN, lambda _: exit(0) )
         i3conn.main()
-        ws_switcher.unlock()
     except Exception as e:
         print(e.args)
         exit(1)
