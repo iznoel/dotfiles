@@ -49,18 +49,18 @@ class ws_switcher:
             ipc.command('workspace next')
         else:
             self.to_workspace(ipc, ws)
-        self.cycling = ws
+            self.cycling = ws
 
     def on_cycle_window(self, ipc: Connection, ws: int):
         if not self.to_workspace(ipc, ws):
             windows = [con
                 for output in ipc.get_tree()   if output.name != '__i3'
                 for ws     in output.nodes     if ws.num      == self.ws
-                for con    in ws.descendants() if con.window  is not None]
+                for con    in ws.descendants() if con.window]
             if len(windows) > 1:
                 next = reduce(lambda a, v: v[1].id if windows[v[0]-1].focused
                         else a, enumerate(windows), 0)
-                return ipc.command(f'[con_id={next}] focus')
+                ipc.command(f'[con_id={next}] focus')
 
     def to_workspace(self, ipc: Connection, ws: int):
         if self.ws != ws:
@@ -76,12 +76,7 @@ def flock(fname: str):
 
 
 if __name__ == "__main__":
-    try:
-        i3conn = Connection()
-        ws_switcher(conn=i3conn, lock=flock)
-        print("Starting")
-        i3conn.on(Event.SHUTDOWN, lambda _: exit(0) )
-        i3conn.main()
-    except Exception as e:
-        print(e.args)
-        exit(1)
+    i3conn = Connection()
+    ws_switcher(conn=i3conn, lock=flock)
+    i3conn.on(Event.SHUTDOWN, lambda _: exit(0) )
+    i3conn.main()
