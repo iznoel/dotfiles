@@ -22,12 +22,12 @@
 #
 
 
-set $ctrl     Control
+set $step     50
 set $mod      Mod4
 set $alt      Mod1
+set $ctrl     Control
 set $exec     exec --no-startup-id
 set $i3_input exec --no-startup-id i3-input --font "pango:Terminus 20px"
-set $step     50
 
 bindsym $mod+q kill
 
