@@ -24,7 +24,7 @@ exec_always --no-startup-id i3-smarter-workspace.py
 """
 
 class ws_switcher:
-    def __init__(self, conn: Connection, lock: Callable):
+    def __init__(self, conn: Connection, lock: Callable[[os.PathLike], object]):
         self.locked = lock(f"{conn.socket_path}.ws-switcher.lock")
         self.ws = reduce(lambda a, v: v.num if v.focused else a,
             conn.get_workspaces(), 0)
