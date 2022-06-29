@@ -18,6 +18,9 @@ __load_completion git &>/dev/null
 alias pit='GIT_DIR=~/.dotfiles GIT_WORK_TREE=~ git'
 complete -o bashdefault -o default -o nospace -F __git_wrap__git_main pit
 
+[[ -f ${XDG_CONFIG_HOME:-~/.config}/aliasrc.local ]] &&
+  source "${XDG_CONFIG_HOME:-~/.config}/aliasrc.local"
+
 function jless
 {
   jq -C "$@" | less

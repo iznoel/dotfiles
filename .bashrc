@@ -47,6 +47,6 @@ if declare -f tcd &>/dev/null; then
   bind -x '"\C-xc":tcd && { "${PROMPT_COMMAND[@]}"; echo -en "\r${PS1@P}"; }'
 fi
 
-if [[ -z $SSH_TTY$VIMRUNTIME ]]; then
-  banner
-fi
+# if [[ -z $SSH_TTY$VIMRUNTIME ]]; then
+#   banner
+# fi
