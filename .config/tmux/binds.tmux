@@ -73,13 +73,8 @@ bind -T copy-mode-vi y     send-keys -X copy-pipe-and-cancel "~/.config/tmux/yan
 # window splitting
 # ----------------
 
-bind -N 'split pane' \\  run -C '#{@split_mode}'
-bind -N 'split pane'  -  run -C '#{@split_mode}'
-bind -N 'split pane'  |  run -C '#{@split_mode}'
-bind -N 'split pane'  _  run -C '#{@split_mode}'
-
-set -g @split_mode {
-  menu -T '[ #[fg=blue]split window#[default] ]' \
+bind -N 'split pane' \\ menu -T \
+'[ #[fg=blue]split window#[default] ]' \
     left      h 'splitw -hb  -c "#{pane_current_path}"' \
     right     l 'splitw -h   -c "#{pane_current_path}"' \
     up        k 'splitw -vb  -c "#{pane_current_path}"' \
@@ -89,7 +84,6 @@ set -g @split_mode {
     rightmost L 'splitw -hf  -c "#{pane_current_path}"' \
     top       K 'splitw -vfb -c "#{pane_current_path}"' \
     bottom    J 'splitw -vf  -c "#{pane_current_path}"'
-}
 
 # custom menues
 # -------------
