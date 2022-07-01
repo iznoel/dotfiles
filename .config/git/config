@@ -15,7 +15,10 @@
 
 [core]
   excludesfile = ~/.config/git/ignore
-  pager = bat
+  pager = less
+
+[pager]
+  diff = bat
 
 [include]
   path = ~/.config/git/config.private
