@@ -2,7 +2,7 @@
 
 focus_on_window_activation urgent
 default_border             normal
-default_floating_border    normal
+default_floating_border    none
 hide_edge_borders          smart
 font                       pango:Terminus 10px
 title_align                left
@@ -10,7 +10,7 @@ focus_follows_mouse        no
 floating_modifier          Mod4
 focus_wrapping             force
 popup_during_fullscreen    leave_fullscreen
-floating_maximum_size      1024 x 1280
+floating_maximum_size      1280x1024
 
 include ~/.config/i3/theme
 include ~/.config/i3/binds
@@ -18,9 +18,15 @@ include ~/.config/i3/binds
 
 # https://i3wm.org/docs/userguide#command_criteria
 
-for_window [all]                            title_format "%class:%title "
-for_window [all]                            title_window_icon on
-for_window [class="floating|Floating"]               floating enable
+for_window [all]  title_format "(%class) %title "
+for_window [all]  title_window_icon on
+
+for_window [class="floating|Floating"]           floating enable
+for_window [class="Alacritty" title="ranger.*"]  move to workspace 2: ranger, focus
+for_window [class="Alacritty" title="vim.*"]     move to workspace 3: vim, focus
+
+for_window [floating] border none
+for_window [tiling]   border normal
 
 for_window [class="mpv"]               floating enable, border pixel 0
 for_window [title="Android Emulator"]  floating enable
@@ -28,10 +34,11 @@ for_window [class="Steam"]             floating enable
 
 assign [class="Genymotion"]  8: Genymotion
 assign [class="VirtualBox*"] 8: vBox
+assign [class="scrcpy"]      8: scrcpy
 assign [class="xfreerdp"]    8: rdp
 assign [class="Steam"]       9: Steam
 assign [title="Zoom.*"]      9: zoom
 
 exec_always --no-startup-id conky
-exec_always --no-startup-id picom --experimental-backends
 exec_always --no-startup-id i3-nop-ws.py
+exec_always --no-startup-id picom --experimental-backends

@@ -35,20 +35,21 @@ bindsym  XF86AudioRaiseVolume $exec pactl set-sink-volume @DEFAULT_SINK@ +1%
 bindsym  XF86AudioLowerVolume $exec pactl set-sink-volume @DEFAULT_SINK@ -1%
 bindsym  XF86AudioMute        $exec pactl set-sink-mute   @DEFAULT_SINK@ toggle
 
-bindsym  $mod+Return          $exec st -c floating -g 120x40
-bindsym  $mod+Shift+Return    $exec st
+bindsym $mod+Return       $exec st -c floating -g 120x40
+bindsym $mod+Shift+Return $exec st
+bindsym $mod+shift+i      $exec "killall unclutter; xmouseless; unclutter"
 
-bindsym  $mod+d               $exec dm dmenu
-bindsym  $mod+shift+i         $exec "killall unclutter; xmouseless; unclutter"
-bindsym  $mod+shift+d         $exec dmenu-xdesk
-bindsym  $mod+shift+e         $exec dmenu-xdesk --edit
-bindsym  $mod+$alt+p          $exec passmenu
-bindsym  $mod+c               $exec reverse-window-color
+bindsym $mod+r       $exec dm dmenu
+bindsym $mod+shift+r $exec dm desktop
+bindsym $mod+d       $exec dmenu-xdesk
+bindsym $mod+shift+d $exec dmenu-xdesk --edit
+bindsym $mod+$alt+p  $exec passmenu
+bindsym $mod+c       $exec reverse-window-color
 
-bindcode 107                  $exec grab
-bindsym  $mod+g               $exec grab interactive
-bindsym  $mod+b               $exec i3-window-tree
-bindsym  $mod+a               $exec i3-focus-urgent
+bindcode 107    $exec grab
+bindsym  $mod+g $exec grab interactive
+bindsym  $mod+b $exec i3-window-tree
+bindsym  $mod+a $exec i3-focus-urgent
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
