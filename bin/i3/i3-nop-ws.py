@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-from i3ipc import Connection, Event, events
+from i3ipc import Connection, Event, Con, events
 from functools import reduce
 from collections.abc import Callable
 import fcntl
+import json
 
 """
 # Next window on workspace
@@ -25,9 +26,10 @@ class ws_switcher:
     def __init__(self, ipc: Connection,
             lock: Callable[[str], object]):
         self.locked = lock(f"{ipc.socket_path}.ws-switcher.lock")
-        self.ws = self.get_current_workspace(ipc)
+        self.check_current_workspace(ipc)
         self.cycling = self.ws
         ipc.on(Event.BINDING, self.route_bind)
+        ipc.on(Event.WORKSPACE_FOCUS, self.on_workspace_focus)
 
     def route_bind(self, ipc: Connection, event: events.BindingEvent):
         bind = event.binding.command
@@ -57,7 +59,7 @@ class ws_switcher:
         if not self.to_workspace(ipc, ws):
             windows = [con
                 for output in ipc.get_tree()   if output.name != '__i3'
-                for ws     in output.nodes     if ws.num      == self.ws
+                for ws     in output.nodes     if ws.id      == self.wsid
                 for con    in ws.descendants() if con.window]
             if len(windows) > 1:
                 if direction == 'prev':
@@ -69,12 +71,10 @@ class ws_switcher:
     def on_anything(self,  ipc: Connection, ws: int, cmd: str):
         if not self.to_workspace(ipc, ws):
             ipc.command(cmd)
-            self.ws = self.get_current_workspace(ipc)
 
     def to_workspace(self, ipc: Connection, ws: int):
         if self.ws != ws:
             ipc.command(f'workspace number {ws}')
-            self.ws = ws
             return True
 
     @classmethod
@@ -90,11 +90,17 @@ class ws_switcher:
             v[1].id if windows[v[0]+1 % max].focused else a,
             enumerate(windows), 0)
 
-    @classmethod
-    def get_current_workspace(cls, ipc: Connection):
-        return reduce(lambda a, v: v.num if v.focused else a,
-                ipc.get_workspaces(), 0)
+    def set_current_ws(self, ws: dict):
+        self.ws   = ws['num']
+        self.wsid = ws['id']
 
+    def on_workspace_focus(self, ipc: Connection, event: events.WorkspaceEvent):
+        self.set_current_ws(event.ipc_data['current'])
+
+    def check_current_workspace(self, ipc: Connection):
+        self.set_current_ws(reduce(
+            lambda a, v: v.ipc_data if v.focused else a,
+            ipc.get_workspaces(), 0))
 
 def flock(fname: str):
     fd = open(fname, 'w')
