@@ -10,7 +10,7 @@ focus_follows_mouse        no
 floating_modifier          Mod4
 focus_wrapping             force
 popup_during_fullscreen    leave_fullscreen
-floating_maximum_size      1280x1024
+floating_maximum_size      1024x1280
 
 include ~/.config/i3/theme
 include ~/.config/i3/binds
@@ -21,7 +21,7 @@ include ~/.config/i3/binds
 for_window [all]  title_format "(%class) %title "
 for_window [all]  title_window_icon on
 
-for_window [class="floating|Floating"]           floating enable
+for_window [class="floating|Floating"]           floating enable, move position center
 for_window [class="Alacritty" title="ranger.*"]  move to workspace 2: ranger, focus
 for_window [class="Alacritty" title="vim.*"]     move to workspace 3: vim, focus
 
@@ -37,8 +37,12 @@ assign [class="VirtualBox*"] 8: vBox
 assign [class="scrcpy"]      8: scrcpy
 assign [class="xfreerdp"]    8: rdp
 assign [class="Steam"]       9: Steam
-assign [title="Zoom.*"]      9: zoom
 
-exec_always --no-startup-id conky
+for_window [class="join.confno.*pwd="] move to workspace 9: zoom
+for_window [class=".*zoom.*"] move to workspace 9: zoom
+for_window [class=".*zoom.*"] move to workspace 9: zoom
+
 exec_always --no-startup-id i3-nop-ws.py
-exec_always --no-startup-id picom --experimental-backends
+exec_always --no-startup-id picom --glx-fshader-win "$(< ~/.config/picom-shaders/hue-aware-invert.glsl)"
+# exec_always --no-startup-id conky
+# exec_always --no-startup-id picom --experimental-backends

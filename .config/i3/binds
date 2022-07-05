@@ -35,7 +35,8 @@ bindsym  XF86AudioRaiseVolume $exec pactl set-sink-volume @DEFAULT_SINK@ +1%
 bindsym  XF86AudioLowerVolume $exec pactl set-sink-volume @DEFAULT_SINK@ -1%
 bindsym  XF86AudioMute        $exec pactl set-sink-mute   @DEFAULT_SINK@ toggle
 
-bindsym $mod+Return       $exec st -c floating -g 120x40
+bindsym $mod+Return       $exec "alacritty --class floating,floating"
+# bindsym $mod+Return       $exec st -c floating -g 120x40
 bindsym $mod+Shift+Return $exec st
 bindsym $mod+shift+i      $exec "killall unclutter; xmouseless; unclutter"
 
@@ -95,19 +96,19 @@ bindsym $mod+u       sticky toggle, border normal
 bindsym $mod+Shift+o move scratchpad
 bindsym $mod+o       scratchpad show
 
-bindsym $mod+1 nop workspace number 1  or next window
-bindsym $mod+2 nop workspace number 2  or next window
-bindsym $mod+3 nop workspace number 3  or next window
-bindsym $mod+4 nop workspace number 4  or next window
-bindsym $mod+5 nop workspace number 5  or next window
-bindsym $mod+6 nop workspace number 6  or next window
-bindsym $mod+7 nop workspace number 7  or next window
-bindsym $mod+8 nop workspace number 8  or next window
-bindsym $mod+9 nop workspace number 9  or next window
-bindsym $mod+0 nop workspace number 10 or next window
+bindsym $mod+1 nop wss ws num 1  or win next or ws next
+bindsym $mod+2 nop wss ws num 2  or win next or ws next
+bindsym $mod+3 nop wss ws num 3  or win next or ws next
+bindsym $mod+4 nop wss ws num 4  or win next or ws next
+bindsym $mod+5 nop wss ws num 5  or win next or ws next
+bindsym $mod+6 nop wss ws num 6  or win next or ws next
+bindsym $mod+7 nop wss ws num 7  or win next or ws next
+bindsym $mod+8 nop wss ws num 8  or win next or ws next
+bindsym $mod+9 nop wss ws num 9  or win next or ws next
+bindsym $mod+0 nop wss ws num 10 or win next or ws next
 
-bindsym $mod+n   workspace next
-bindsym $mod+p   workspace prev
+bindsym $mod+n   nop wss ws next any
+bindsym $mod+p   nop wss ws prev any
 bindsym $mod+Tab workspace back_and_forth
 
 bindsym $mod+Shift+1   move container to workspace number 1
@@ -209,5 +210,6 @@ mode --pango_markup "$backspace_menu2" {
     bindcode $mod+22  mode "default"
     bindsym  m        $exec sh -c 'setsid mpv --volume=50 "$(xclip -sel clip -o)"'; mode default
     bindsym  v        $exec st -c floating -e 'alsamixer'; mode default
+    bindsym  shift+v  $exec pavucontrol
 }
 
